@@ -8,6 +8,7 @@
 import Foundation
 import Moya
 import Combine
+import AdSupport
 
 protocol APIService: TargetType { }
 
@@ -34,7 +35,8 @@ extension APIService {
             "curse": "starloanapi",
             "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
             "turned": deviceInfo.identifier,
-            "boyfine": String.generateUUID()
+            "boyfine": String.generateUUID(),
+            "astarna": ASIdentifierManager.shared().advertisingIdentifier.uuidString
         ]
     }
 }
@@ -66,9 +68,7 @@ extension MoyaProvider {
                     } catch {
                         print("Response parsing error: \(error)")
                     }
-//                    continuation.resume(returning: response)
-                  continuation.resume(throwing: NSError(domain: "APIError", code: -2, userInfo: [NSLocalizedDescriptionKey: "Session expired"]))
-
+                    continuation.resume(returning: response)
                 case let .failure(error):
                     continuation.resume(throwing: error)
                 }

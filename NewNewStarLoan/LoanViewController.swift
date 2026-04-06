@@ -411,8 +411,8 @@ class LoanViewController: UIViewController {
     loanScrollView.setupPullToRefresh(target: self, action: #selector(fetchHomePageData))
     spScrollView.setupPullToRefresh(target: self, action: #selector(fetchHomePageData))
 
-    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1242)) {
-      self.initializeFacebookSDK()
+    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1242)) {[weak self] in
+        self?.initializeFacebookSDK()
     }
   }
   
@@ -428,12 +428,14 @@ class LoanViewController: UIViewController {
           Task {
             do {
               let response = try await RiskService.shared.market(feudally: String.generateUUID(), hold: idfv, house: ASIdentifierManager.shared().advertisingIdentifier.uuidString)
-              let facebook = response.middle.facebook
-              Settings.shared.appID = facebook.facebookAppID
-              Settings.shared.clientToken = facebook.facebookClientToke
-              Settings.shared.displayName = facebook.facebookDisplayName
-              Settings.shared.appURLSchemeSuffix = facebook.cFBundleURLScheme
-              ApplicationDelegate.shared.application(UIApplication.shared,didFinishLaunchingWithOptions: nil)
+              await MainActor.run {
+                let facebook = response.middle.facebook
+                Settings.shared.appID = facebook.facebookAppID
+                Settings.shared.clientToken = facebook.facebookClientToke
+                Settings.shared.displayName = facebook.facebookDisplayName
+                Settings.shared.appURLSchemeSuffix = facebook.cFBundleURLScheme
+                ApplicationDelegate.shared.application(UIApplication.shared,didFinishLaunchingWithOptions: nil)
+              }
             } catch {
               
             }
@@ -718,7 +720,8 @@ class LoanViewController: UIViewController {
       "curse": "starloanapi",
       "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
       "turned": deviceInfo.identifier,
-      "boyfine": String.generateUUID()
+      "boyfine": String.generateUUID(),
+      "astarna": ASIdentifierManager.shared().advertisingIdentifier.uuidString
     ]
     
     // 构建查询字符串
@@ -831,7 +834,8 @@ class LoanViewController: UIViewController {
         "curse": "starloanapi",
         "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
         "turned": deviceInfo.identifier,
-        "boyfine": String.generateUUID()
+        "boyfine": String.generateUUID(),
+        "astarna": ASIdentifierManager.shared().advertisingIdentifier.uuidString
       ]
       
       // 构建查询字符串
@@ -875,8 +879,14 @@ class LoanViewController: UIViewController {
               Task {
                   do {
                       let result = try await ProductService.shared.applyProduct(feud: String(productId), bit: String.generateUUID(), invited: String.generateUUID())
-                      ProgressHUD.dismiss()
-                    self.handleProductURL(result.middle.trade)
+                      await MainActor.run {
+                        ProgressHUD.dismiss()
+                        self.handleProductURL(result.middle.trade)
+                      }
+                  } catch {
+                      await MainActor.run {
+                        ProgressHUD.dismiss()
+                      }
                   }
               }
           }
@@ -925,8 +935,14 @@ class LoanViewController: UIViewController {
           Task {
               do {
                   let result = try await ProductService.shared.applyProduct(feud: String(productId), bit: String.generateUUID(), invited: String.generateUUID())
-                  ProgressHUD.dismiss()
-                self.handleProductURL(result.middle.trade)
+                  await MainActor.run {
+                    ProgressHUD.dismiss()
+                    self.handleProductURL(result.middle.trade)
+                  }
+              } catch {
+                  await MainActor.run {
+                    ProgressHUD.dismiss()
+                  }
               }
           }
       }
@@ -989,7 +1005,8 @@ class LoanViewController: UIViewController {
           "curse": "starloanapi",
           "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
           "turned": deviceInfo.identifier,
-          "boyfine": String.generateUUID()
+          "boyfine": String.generateUUID(),
+          "astarna": ASIdentifierManager.shared().advertisingIdentifier.uuidString
       ]
       
       let queryItems = commonParams.map { key, value in
@@ -1083,6 +1100,9 @@ class LoanViewController: UIViewController {
     }
     
     ProgressHUD.animate("Fetching...")
+    DispatchQueue.main.asyncAfter(wallDeadline: .now() + .seconds(8)) {
+      ProgressHUD.dismiss()
+    }
 //    self.spScrollView.isHidden = true
 //    self.loanScrollView.isHidden = true
     self.loadingMaskView.isHidden = false
@@ -1092,8 +1112,8 @@ class LoanViewController: UIViewController {
           trucks: String.generateUUID(),
           multicolored: String.generateUUID()
         )
-        ProgressHUD.dismiss()
         await MainActor.run {
+          ProgressHUD.dismiss()
           self.loadingMaskView.isHidden = true
           spScrollView.mj_header?.endRefreshing()
           loanScrollView.mj_header?.endRefreshing()
@@ -1244,8 +1264,14 @@ extension LoanViewController: UICollectionViewDelegate, UICollectionViewDataSour
         Task {
             do {
                 let result = try await ProductService.shared.applyProduct(feud: String(productId), bit: String.generateUUID(), invited: String.generateUUID())
-                ProgressHUD.dismiss()
-                handleProductURL(result.middle.trade)
+                await MainActor.run {
+                  ProgressHUD.dismiss()
+                  self.handleProductURL(result.middle.trade)
+                }
+            } catch {
+                await MainActor.run {
+                  ProgressHUD.dismiss()
+                }
             }
         }
       }

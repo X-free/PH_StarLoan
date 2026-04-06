@@ -6,49 +6,108 @@
 //
 
 import SwiftUI
+import AppTrackingTransparency
+import UIKit
+import AdSupport
+import FBSDKCoreKit
 
 struct OnboardingView: View {
-  @Binding var isPresented: Bool
   @State private var currentPage = 0
   
-  let images = ["ydy_jpg_01", "ydy_jpg_02", "ydy_jpg_03"]
+  var roundok: ()-> Void
+  @State private var countdown = 3
+  
+  @State private var timer: Timer? = nil
+
+  
+//  let images = ["ydy_jpg_01", "ydy_jpg_02", "ydy_jpg_03"]
+//  let images = ["ydy_jpg_02", "ydy_jpg_03"]
+  let images = ["ydy_jpg_02"]
   
   var body: some View {
-      if #available(iOS 14.0, *) {
-          ZStack {
-              Image(images[currentPage])
-                  .resizable()
-                  .scaledToFill()
-              
-              VStack {
-                  Spacer()
-                  
-                  Button(action: {
-                      if currentPage < images.count - 1 {
-                          withAnimation {
-                              currentPage += 1
-                          }
-                      } else {
-                          withAnimation {
-                              isPresented = false
-                              UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
-                          }
-                      }
-                  }) {
-                      Text("Next")
-                          .font(.system(size: 16, weight: .heavy))
-                          .foregroundColor(.white)
-                          .frame(width: 125, height: 44)
-                          .background(Color(hex: "06101C"))
-                          .cornerRadius(22)
-                  }
-                  .padding(.bottom, 160)
-              }
+    ZStack {
+      Image(images[currentPage])
+        .resizable()
+        .scaledToFill()
+      
+      VStack {
+        HStack {
+          Spacer()
+          
+          Text("\(countdown) s")
+            .padding(.horizontal, 10)
+            .font(.system(size: 16))
+            .foregroundColor(.white)
+            .frame(height: 22)
+            .background(Color.black.opacity(0.3))
+            .cornerRadius(11)
+            .padding(.trailing, 20)
+        }
+        .padding(.top, 44)
+        Spacer()
+        
+        Text("Next")
+          .font(.system(size: 16, weight: .heavy))
+          .foregroundColor(.white)
+          .frame(width: 125, height: 44)
+          .background(Color(hex: "06101C"))
+          .cornerRadius(22)
+          .padding(.bottom, 160)
+          .onTapGesture {
+            timer?.invalidate()
+            roundok()
+            UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
           }
-          .ignoresSafeArea()
-      } else {
-          // Fallback on earlier versions
       }
+    }
+    .ignoresSafeArea()
+    .onAppear {
+//      reportaod()
+      startCountdown()
+    }
+  }
+  
+  private func startCountdown() {
+    countdown = 3
+    timer?.invalidate()
+    
+    timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+      if countdown > 1 {
+        countdown -= 1
+      } else {
+        timer.invalidate()
+        
+        roundok()
+        UserDefaults.standard.set(true, forKey: "hasSeenOnboarding")
+      }
+    }
+  }
+  
+  private func reportaod() {
+    DispatchQueue.main.asyncAfter(wallDeadline: .now() + .milliseconds(1230)) {
+      ATTrackingManager.requestTrackingAuthorization { status in
+        DispatchQueue.main.async {
+          let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+          
+          let manager = SomeIdentifierManager()
+          let idfv = manager.fetchIDFV() ?? ""
+          
+          Task {
+            do {
+              let response = try await RiskService.shared.market(feudally: String.generateUUID(), hold: idfv, house: ASIdentifierManager.shared().advertisingIdentifier.uuidString)
+              let facebook = response.middle.facebook
+              Settings.shared.appID = facebook.facebookAppID
+              Settings.shared.clientToken = facebook.facebookClientToke
+              Settings.shared.displayName = facebook.facebookDisplayName
+              Settings.shared.appURLSchemeSuffix = facebook.cFBundleURLScheme
+              ApplicationDelegate.shared.application(UIApplication.shared,didFinishLaunchingWithOptions: nil)
+            } catch {
+              
+            }
+          }
+        }
+      }
+    }
   }
 }
 

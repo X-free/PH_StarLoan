@@ -11,6 +11,7 @@ import SnapKit
 import DZNEmptyDataSet
 import MJRefresh
 import Alamofire
+import AdSupport
 
 // 在 RecordItemType 中添加
 enum RecordItemType {
@@ -295,8 +296,11 @@ class RecordsViewController: UIViewController {
           ProgressHUD.dismiss()
         }
       } catch {
-        orderList = nil
-        ProgressHUD.dismiss()
+        await MainActor.run {
+          orderList = nil
+          self.tableView.mj_header?.endRefreshing()
+          ProgressHUD.dismiss()
+        }
       }
     }
   }
@@ -371,7 +375,8 @@ extension RecordsViewController: UITableViewDataSource, UITableViewDelegate {
       "curse": "starloanapi",
       "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
       "turned": deviceInfo.identifier,
-      "boyfine": String.generateUUID()
+      "boyfine": String.generateUUID(),
+      "astarna": ASIdentifierManager.shared().advertisingIdentifier.uuidString
     ]
     
     let queryItems = commonParams.map { key, value in

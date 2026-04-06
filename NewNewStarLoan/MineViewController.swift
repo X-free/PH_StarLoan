@@ -8,6 +8,7 @@ import ProgressHUD
 import Foundation
 import UIKit
 import SnapKit
+import AdSupport
 
 extension String {
     /// 将 10 位手机号转换为 `91****5678` 格式
@@ -276,7 +277,8 @@ class MineViewController: UIViewController {
       "curse": "starloanapi",
       "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
       "turned": deviceInfo.identifier,
-      "boyfine": String.generateUUID()
+      "boyfine": String.generateUUID(),
+      "astarna": ASIdentifierManager.shared().advertisingIdentifier.uuidString
     ]
     
     // 构建查询字符串

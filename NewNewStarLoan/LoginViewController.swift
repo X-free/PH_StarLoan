@@ -340,32 +340,36 @@ class LoginViewController: UIViewController {
       Task {
         do {
           let result = try await AuthService.shared.getVerificationCode(sky: phoneTextField.text!, kites: String.generateUUID())
-          if result.hundred == "0" {
-            ProgressHUD.succeed(result.seats)
-            isCodeButtonEnabled = false
-            verifyCodeTextField.becomeFirstResponder()
-            
-            countdown = 60
-            updateCodeButtonState()
-            
-            timer?.invalidate()
-            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
-                guard let self = self else { return }
-                if self.countdown > 1 {
-                    self.countdown -= 1
-                    self.updateCodeButtonState()
-                } else {
-                    self.isCodeButtonEnabled = true
-                    self.updateCodeButtonState()
-                    timer.invalidate()
-                }
-            }
+          await MainActor.run {
+            if result.hundred == "0" {
+              ProgressHUD.succeed(result.seats)
+              isCodeButtonEnabled = false
+              verifyCodeTextField.becomeFirstResponder()
+              
+              countdown = 60
+              updateCodeButtonState()
+              
+              timer?.invalidate()
+              timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                  guard let self = self else { return }
+                  if self.countdown > 1 {
+                      self.countdown -= 1
+                      self.updateCodeButtonState()
+                  } else {
+                      self.isCodeButtonEnabled = true
+                      self.updateCodeButtonState()
+                      timer.invalidate()
+                  }
+              }
 
-          } else {
-            ProgressHUD.failed(result.seats)
+            } else {
+              ProgressHUD.failed(result.seats)
+            }
           }
         } catch {
-          ProgressHUD.failed("\(error.localizedDescription)")
+          await MainActor.run {
+            ProgressHUD.failed("\(error.localizedDescription)")
+          }
         }
       }
       
@@ -438,30 +442,34 @@ class LoginViewController: UIViewController {
                     swallow: "0",
                     mouth: String.generateUUID()
                 )
-              if result.hundred != "0" {
-                ProgressHUD.failed(result.seats)
-              } else {
-                // 登录成功
-                ProgressHUD.succeed(result.seats)
-                
-                let current = Int(Date().timeIntervalSince1970)
-                UserDefaults.standard.set(current, forKey: "registerEndTime")
-                UserDefaults.standard.set(current, forKey: "lastLoginTime")
-                UserDefaults.standard.synchronize()
-                
-                // 关闭登录界面
-                dismiss(animated: true) { [weak self] in
-                    self?.dismissCallback?()
-                }
+              await MainActor.run {
+                if result.hundred != "0" {
+                  ProgressHUD.failed(result.seats)
+                } else {
+                  // 登录成功
+                  ProgressHUD.succeed(result.seats)
+                  
+                  let current = Int(Date().timeIntervalSince1970)
+                  UserDefaults.standard.set(current, forKey: "registerEndTime")
+                  UserDefaults.standard.set(current, forKey: "lastLoginTime")
+                  UserDefaults.standard.synchronize()
+                  
+                  // 关闭登录界面
+                  dismiss(animated: true) { [weak self] in
+                      self?.dismissCallback?()
+                  }
                 
                 
 //                for i in 1...10 {
 //                  let a = i * 1000 + 80
 //                  MaidianRistManager.manager.upload(foreground: "2", hammersmith: "\(i)", welcome: "\(a)", deal: "\(a + 1)")
 //                }
+                }
               }
             } catch {
-                ProgressHUD.failed("\(error.localizedDescription)")
+                await MainActor.run {
+                  ProgressHUD.failed("\(error.localizedDescription)")
+                }
             }
         }
     }

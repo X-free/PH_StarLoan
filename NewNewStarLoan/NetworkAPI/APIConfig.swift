@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 enum APIConfig {
-    static let host = "https://philippinemachinery.com/starloanapi"
-  static let root = "https://philippinemachinery.com"
+    static let host = "https://philippine-machinery.com/starloanapi"
+  static let root = "https://philippine-machinery.com"
 //    static let version = "/v1"
     static let baseURL = host
   static let privacyURL       = "\(root)/onionOstri"

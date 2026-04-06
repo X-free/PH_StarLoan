@@ -373,7 +373,8 @@ class ProductDetailViewController: UIViewController {
               "curse": "starloanapi",
               "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
               "turned": deviceInfo.identifier,
-              "boyfine": String.generateUUID()
+              "boyfine": String.generateUUID(),
+              "astarna": ASIdentifierManager.shared().advertisingIdentifier.uuidString
             ]
             
             // 构建查询字符串

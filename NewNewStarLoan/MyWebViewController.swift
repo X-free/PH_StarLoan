@@ -285,7 +285,8 @@ extension MyWebViewController: WKScriptMessageHandler {
           "curse": "starloanapi",
           "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
           "turned": deviceInfo.identifier,
-          "boyfine": String.generateUUID()
+          "boyfine": String.generateUUID(),
+          "astarna": ASIdentifierManager.shared().advertisingIdentifier.uuidString
       ]
       
       let queryItems = commonParams.map { key, value in

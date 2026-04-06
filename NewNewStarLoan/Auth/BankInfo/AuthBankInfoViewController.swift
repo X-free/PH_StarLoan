@@ -394,60 +394,6 @@ extension AuthBankInfoViewController: UITableViewDataSource, UITableViewDelegate
           ProgressHUD.dismiss()
           if result.middle.wedneskpiday == nil {
             navigationController?.popToRootViewController(animated: true)
-            
-            /*
-            ProgressHUD.dismiss()
-            let orderNumber = result.middle.tag.herat
-            let end9 = Int(Date().timeIntervalSince1970)
-            MaidianRistManager.manager.upload(foreground: self.viewModel.productId, hammersmith: "9", welcome: "\(end9)", deal: "\(end9)")
-            let response = try await OrderService.shared.fetchJumpURLWithOrder(rose: orderNumber)
-
-            await MainActor.run {
-              print("获取跳转链接成功：\(response.middle.trade)")
-              
-              var urlString = response.middle.trade
-              let deviceInfo = DeviceInfo.current
-              let commonParams = [
-                "assure": "iOS",
-                "solemnly": Bundle.main.version,
-                "sense": deviceInfo.model,
-                "give": deviceInfo.identifier,
-                "uncanny": deviceInfo.systemVersion,
-                "curse": "starloanapi",
-                "hypnotised": UserDefaults.standard.string(forKey: "sessionId") ?? "",
-                "turned": deviceInfo.identifier,
-                "boyfine": String.generateUUID()
-              ]
-              
-              // 构建查询字符串
-              let queryItems = commonParams.map { key, value in
-                "\(key)=\(value)"
-              }.joined(separator: "&")
-              
-              // 添加参数到URL
-              if urlString.contains("?") {
-                urlString += "&\(queryItems)"
-              } else {
-                urlString += "?\(queryItems)"
-              }
-              
-              print("处理后的URL：", urlString)
-              
-              // 显示 WebView - 只使用一种导航方式
-              // 修改 WebView 跳转逻辑
-              let webViewController = MyWebViewController(urlString: urlString)
-              let navigationController = UINavigationController(rootViewController: webViewController)
-              // 先关闭当前的 AuthBankInfoViewController
-              self.dismiss(animated: true) { [weak self] in
-                  // 在关闭完成后，从 window 的根视图控制器来展示新的导航控制器
-                  if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                     let window = windowScene.windows.first {
-                      navigationController.modalPresentationStyle = .fullScreen
-                      window.rootViewController?.present(navigationController, animated: true)
-                  }
-              }
-            }
-            */
           }
           
           

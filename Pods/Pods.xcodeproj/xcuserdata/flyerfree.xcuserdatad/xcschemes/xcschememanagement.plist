@@ -157,7 +157,7 @@
 		<key>Pods-Moneycat.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>36</integer>
+			<integer>35</integer>
 		</dict>
 		<key>Pods-NewNewStarLoan.xcscheme_^#shared#^_</key>
 		<dict>
@@ -182,7 +182,7 @@
 		<key>SwiftKeychainWrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>35</integer>
+			<integer>36</integer>
 		</dict>
 	</dict>
 </dict>

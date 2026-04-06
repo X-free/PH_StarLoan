@@ -25,23 +25,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     // 检查是否已经看过引导页
 //    let hasSeenOnboarding = UserDefaults.standard.bool(forKey: "hasSeenOnboarding")
-    let hasSeenOnboarding = true
+//    
+//    if !hasSeenOnboarding {
+//      // 如果没有看过引导页，显示 OnboardingView
+//      let onboardingView = OnboardingView {
+//        self.switchToMainInterface()
+//      }
+//      let hostingController = UIHostingController(rootView: onboardingView)
+//      window?.rootViewController = hostingController
+//    } else {
+//      switchToMainInterface()
+//    }
     
-    if !hasSeenOnboarding {
-      // 如果没有看过引导页，显示 OnboardingView
-      let onboardingView = OnboardingView(isPresented: .init(get: {
-        return true
-      }, set: { newValue in
-        if !newValue {
-          // 当 isPresented 被设置为 false 时，切换到主界面
-          self.switchToMainInterface()
-        }
-      }))
-      let hostingController = UIHostingController(rootView: onboardingView)
-      window?.rootViewController = hostingController
-    } else {
-      switchToMainInterface()
-    }
+    switchToMainInterface()
     
     window?.makeKeyAndVisible()
     
